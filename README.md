@@ -32,4 +32,48 @@ createDiv();
 就像现实生活中的自动贩卖机，
 用户只要点击对应产品的按钮就可以获得对应产品.
 
+***
+```javascript
+function Flight() {
+        getDom('facipt').value = 'This is Flight';
+    }
+    function Hotel() {
+        getDom('facipt').value = 'This is hotel';
+    }
+    function User() {
+        this.shopCart = [];
+    }
+    var productFactory = (function () {
+        var productFactories = {
+            "flight": function () {
+                return new Flight();
+            },
+            "hotel": function () {
+                return new Hotel();
+            }
+        };
 
+        return {
+            createProduct: function (productType) {
+                return productFactories[productType]();
+            }
+        }
+    })();
+    User.prototype = {
+        constructor: User,
+        order: function (productType) {
+            this.shopCart.push(productFactory.createProduct(productType));
+        }
+    }
+    var productEnums = {
+        flight: "flight",
+        hotel: "hotel"
+    }
+    var user = new User();
+    getDom('facbtn1').onclick = function () {
+        user.order(productEnums.flight);
+    };
+    getDom('facbtn2').onclick = function () {
+        user.order(productEnums.hotel);
+    }
+```

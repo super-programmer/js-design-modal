@@ -27,13 +27,23 @@
     </h1>
     <br>
     <input type="button" class="u-btn u-btn-nm u-btn-bg-orange" value="创建div" id="sinBtn">
+    <br>
+    <h1>
+        2.简单工厂模式
+    </h1>
+    <br>
+    <input type="button" class="u-btn u-btn-nm u-btn-bg-orange" value="预定航班" id="facbtn1">
+    <input type="button" class="u-btn u-btn-nm u-btn-bg-orange" value="预定酒店" id="facbtn2">
+    <input type="text" class="u-ipt" id="facipt">
 </div>
 
 </body>
 <script>
+    var getDom = function(id) {
+        return document.getElementById(id);
+    };
     /*时钟*/
     (function(){
-
         var digit=
                 [
                     [
@@ -289,9 +299,8 @@
                 render();
             },50);
         }
-
     })();
-/*单例模式*/
+    /*单例模式*/
     var createDiv = (function(){
         var div;
         return function(){
@@ -305,8 +314,51 @@
             }
         }
     })();
-    document.getElementById('sinBtn').onclick = function (){
+    getDom('sinBtn').onclick = function (){
         createDiv();
+    }
+    /*简单工厂模式*/
+    function Flight() {
+        getDom('facipt').value = 'This is Flight';
+    }
+    function Hotel() {
+        getDom('facipt').value = 'This is hotel';
+    }
+    function User() {
+        this.shopCart = [];
+    }
+    var productFactory = (function () {
+        var productFactories = {
+            "flight": function () {
+                return new Flight();
+            },
+            "hotel": function () {
+                return new Hotel();
+            }
+        };
+
+        return {
+            createProduct: function (productType) {
+                return productFactories[productType]();
+            }
+        }
+    })();
+    User.prototype = {
+        constructor: User,
+        order: function (productType) {
+            this.shopCart.push(productFactory.createProduct(productType));
+        }
+    }
+    var productEnums = {
+        flight: "flight",
+        hotel: "hotel"
+    }
+    var user = new User();
+    getDom('facbtn1').onclick = function () {
+        user.order(productEnums.flight);
+    };
+    getDom('facbtn2').onclick = function () {
+        user.order(productEnums.hotel);
     }
 </script>
 </html>
