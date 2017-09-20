@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>js设计模式杂货铺</title>
+    <link rel="stylesheet" href="http://static.leke.cn/styles/common/global.css">
+    <style>
+        body{
+            padding:20px;
+        }
+        h1{
+            font-size:20px;font-weight:bold;
+        }
+    </style>
+</head>
+<body>
+<h1>
+    单例模式
+</h1>
+<input type="button" class="u-btn u-btn-nm u-btn-bg-orange" value="创建div" id="sinBtn">
+</body>
+<script>
+    var createDiv = (function(){
+        var div;
+        return function(){
+            if(!div){
+                div = document.createElement('div');
+                div.style.width = '100px';
+                div.style.height = '100px';
+                div.style.background = 'red';
+                div.style.marginBottom = '10px';
+                document.body.appendChild(div);
+            }
+        }
+    })();
+    document.getElementById('sinBtn').onclick = function (){
+        createDiv();
+    }
+</script>
+</html>
