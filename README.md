@@ -83,7 +83,7 @@ function Flight() {
 观察者也可以退订。这种行为依赖你对模式的具体实现。对于观察者有两个基本的方式可以获取数据：push和pull。push方式是一但发生变化，发布者会立即触发订阅者的提醒事件。
 pull方式是只要订阅都觉得有必要，随时可以检查发布者的变化。
 
-.publisher -> push subscriber
+*publisher -> push subscriber
 ***
 ```javascript
 var Observable = function() {
@@ -128,7 +128,7 @@ observable = new Observable();
 observable.subscribe(Observer);
 observable.publish('我们发布了！');
 ```
-.subscriber -> push publisher
+*subscriber -> push publisher
 ***
 ```javascript
 Observable = function() {
