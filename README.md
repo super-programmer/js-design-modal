@@ -77,3 +77,110 @@ function Flight() {
         user.order(productEnums.hotel);
     }
 ```
+
+3.观察者模式
+>观察者模式是:一个观察者（observer，也叫订阅者：subscriber）订阅一个可观察对象（observable，也叫发布者：publisher），期待发生些有趣的事。
+观察者也可以退订。这种行为依赖你对模式的具体实现。对于观察者有两个基本的方式可以获取数据：push和pull。push方式是一但发生变化，发布者会立即触发订阅者的提醒事件。
+pull方式是只要订阅都觉得有必要，随时可以检查发布者的变化。
+
+**publisher -> push subscriber
+```javascript
+var Observable = function() {
+    this.subscribers = [];
+}
+
+Observable.prototype = {
+    subscribe: function(callback) {
+        // 大多数情况下，你会想要检查订阅者数组里是否已经存在这个回调(callback)了。
+        // 不过我们现在没有必要关注这些旁枝末节的东西。
+        this.subscribers.push(callback);
+    },
+    unsubscribe: function(callback) {
+        var i = 0,
+            len = this.subscribers.length;
+
+        // 遍历数组，如果找到这个回调(callback)，就删除它。
+        for (; i < len; i++) {
+            if (this.subscribers[i] === callback) {
+                this.subscribers.splice(i, 1);
+                // 一旦我们找到了，就没必要继续执行后面的代码，直接return。
+                return;
+            }
+        }
+    },
+    publish: function(data) {
+        var i = 0,
+            len = this.subscribers.length;
+
+        // 遍历整个订阅者数组，执行每一个回调。
+        for (; i < len; i++) {
+            this.subscribers[i](data);
+        }
+    }
+};
+
+var Observer = function (data) {
+    console.log(data);
+}
+// 这里是具体的用法
+observable = new Observable();
+observable.subscribe(Observer);
+observable.publish('我们发布了！');
+```
+***subscriber -> push publisher
+```javascript
+Observable = function() {
+    this.status = "constructed";
+}
+Observable.prototype.getStatus = function() {
+    return this.status;
+}
+
+Observer = function() {
+    this.subscriptions = [];
+}
+Observer.prototype = {
+    subscribeTo: function(observable) {
+        this.subscriptions.push(observable);
+    },
+    unsubscribeFrom: function(observable) {
+        var i = 0,
+            len = this.subscriptions.length;
+
+        // 遍历数组，如果找到这个发布者(observable)，就删除它。
+        for (; i < len; i++) {
+            if (this.subscriptions[i] === observable) {
+                this.subscriptions.splice(i, 1);
+                // 一旦我们找到了，就没必要继续执行后面的代码，直接return。
+                return;
+            }
+        }
+    },
+    doSomethingIfOk: function() {
+        var i = 0;
+            len = this.subscriptions.length;
+
+        // 遍历subscriptions确定每个元素的状态是否变成了ok，
+        // 如果是ok的话就处理
+        for (; i < len; i++) {
+            if (this.subscriptions[i].getStatus() === "ok") {
+                // 做些处理，因为observable已经变成我们想要的状态
+            }
+        }
+    }
+}
+
+var observer = new Observer(),
+    observable = new Observable();
+observer.subscribeTo(observable);
+
+// 因为状态并没有改变所以什么都不会发生
+observer.doSomethingIfOk();
+
+// 把状态变为ok，现在你才会处理
+observable.status = "ok";
+observer.doSomethingIfOk();
+```
+
+
+
