@@ -5,6 +5,9 @@
     <title>js设计模式杂货铺</title>
     <link rel="stylesheet" href="http://static.leke.cn/styles/common/global.css">
     <style>
+        h1{
+            font-size:20px;font-weight:bold;
+        }
         .box{
             width:1200px;
             margin:0 auto;
@@ -14,8 +17,11 @@
             width:200px;
             height:30px;
         }
-        h1{
-            font-size:20px;font-weight:bold;
+        .looker{
+            float:left;
+            width:200px;
+            height:200px;
+            border:1px solid #ececec;
         }
     </style>
 </head>
@@ -25,16 +31,27 @@
     <h1>
         1.单例模式
     </h1>
-    <br>
+    <br/>
     <input type="button" class="u-btn u-btn-nm u-btn-bg-orange" value="创建div" id="sinBtn">
-    <br>
+    <br/>
+    <br/>
+    <div id="canbox"></div>
     <h1>
         2.简单工厂模式
     </h1>
     <br>
     <input type="button" class="u-btn u-btn-nm u-btn-bg-orange" value="预定航班" id="facbtn1">
     <input type="button" class="u-btn u-btn-nm u-btn-bg-orange" value="预定酒店" id="facbtn2">
+    <br>
+    <br>
     <input type="text" class="u-ipt" id="facipt">
+    <br>
+    <br>
+    <h1>
+        3.观察者模式
+    </h1>
+    <div id="looker1" class="looker"></div>
+    <div id="looker2" class="looker"></div>
 </div>
 
 </body>
@@ -223,6 +240,7 @@
                 var temp = /(\d)(\d):(\d)(\d):(\d)(\d)/.exec(new Date());
                 var NewData = [];
                 NewData.push(temp[1],temp[2],10,temp[3],temp[4],10,temp[5],temp[6]);
+                checkbg(temp);
                 for(var i = data.length-1; i >=0 ; i--){
                     //时间发生变化
                     if(NewData[i] !== data[i]){
@@ -310,7 +328,7 @@
                 div.style.height = '100px';
                 div.style.background = 'red';
                 div.style.marginBottom = '10px';
-                document.body.appendChild(div);
+                 getDom('canbox').appendChild(div);
             }
         }
     })();
@@ -359,6 +377,63 @@
     };
     getDom('facbtn2').onclick = function () {
         user.order(productEnums.hotel);
+    }
+    /*观察者模式*/
+    var Observable = function() {
+        this.subscribers = [];
+    }
+
+    Observable.prototype = {
+        subscribe: function(callback) {
+            // 大多数情况下，你会想要检查订阅者数组里是否已经存在这个回调(callback)了。
+            // 不过我们现在没有必要关注这些旁枝末节的东西。
+            this.subscribers.push(callback);
+        },
+        unsubscribe: function(callback) {
+            var i = 0,
+                    len = this.subscribers.length;
+
+            // 遍历数组，如果找到这个回调(callback)，就删除它。
+            for (; i < len; i++) {
+                if (this.subscribers[i] === callback) {
+                    this.subscribers.splice(i, 1);
+                    // 一旦我们找到了，就没必要继续执行后面的代码，直接return。
+                    return;
+                }
+            }
+        },
+        publish: function(data) {
+            var i = 0,
+                    len = this.subscribers.length;
+
+            // 遍历整个订阅者数组，执行每一个回调。
+            for (; i < len; i++) {
+                this.subscribers[i](data);
+            }
+        }
+    };
+
+    var Observer = function (data) {
+
+        if(data === 1){
+            getDom('looker1').style.background = 'red'
+            getDom('looker2').style.background = '#fff'
+        }else{
+            getDom('looker2').style.background = 'red'
+            getDom('looker1').style.background = '#fff'
+        }
+
+    }
+    // 这里是具体的用法
+    observable = new Observable();
+    observable.subscribe(Observer);
+    function checkbg(temp){
+        var num = temp[0].slice(6,8);
+        if(num % 2 == 0){
+            observable.publish(1);
+        }else{
+            observable.publish(2);
+        }
     }
 </script>
 </html>
